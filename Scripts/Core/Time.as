@@ -6,6 +6,9 @@
  *   Core/Time.as - Time and Periodic Script Management
  */
 
+import mx.transitions.OnEnterFrameBeacon;
+OnEnterFrameBeacon.init();
+
 /* TIME MANAGEMENT */
 var Time:Object = {};
 Time.Ticks = getTimer();
@@ -28,29 +31,30 @@ Time.Conv.Text_hhmmss = function ( secs ):String {
 Time.Conv.Num_2Dig = function ( num ):String { return ( num < 10 ) ? "0" + num : num; }
 
 
-// The following runs every 1 / FRAMERATE seconds. For the default loader, fps is 24fps.
-// This gives you an onEnterFrame trigger interval of 42ms (This runs every 42ms)
-// This also means that you cannot set intervals shorter than 42ms. You should not need to.
-onEnterFrame = function ():Void
+// The following runs every 1 / FRAMERATE seconds. For Plasma, fps is 25fps.
+// This gives you an onEnterFrame trigger interval of 40ms (This runs every 40ms)
+// This also means that you cannot set intervals shorter than 40ms and should not need to.
+Time.onEnterFrame = function ():Void
 {
 	Time.Ticks = getTimer();
 
-	var pobj:Object;
-	for ( var idx in Time.PeriodicQueue ) {
-		pobj = Time.PeriodicQueue[ idx ];
-		if ( pobj.Prev && ( Time.Ticks - pobj.Prev ) < pobj.Interval )
+	var pobj:Object, len:Number = Queue.Periodic.length;
+	for ( var i:Number = 0; i < len; i++ ) {
+		pobj = Queue.Periodic[ i ];
+		if ( pobj.last_t && ( Time.Ticks - pobj.last_t ) < pobj.interval )
 				continue;
-		pobj.Prev = Time.Ticks
-		pobj.Function();
+		pobj.last_t = Time.Ticks
+		pobj.func();
 	}
 }
+MovieClip.addListener( Time );
 
 // Interval in milliseconds
-Time.PeriodicQueue = new Array();
-Do_Periodic = function ( dur:Number, func:Function ):Void {
-	var obj:Object = new Object();
-	dur = ( dur ) ? dur : 1000;													// If duration not set, set to 1000ms = 1s
-	obj.Interval = dur;
-	obj.Function = func;
-	Time.PeriodicQueue.push( obj );
+Queue.Periodic = [];
+function Periodic ( dur:Number, func:Function ):Void {
+	if ( func == undefined ) return;
+	Queue.Periodic.push( {
+		interval: ( dur ) ? dur : 1000,												// If duration not set, set to 1000ms = 1s
+		func: func
+	} );
 }

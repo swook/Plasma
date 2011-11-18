@@ -6,55 +6,68 @@
  *   Anim/Tween.as - Tweening Functionality
  */
 
-Anim.BeingTweened = {};
+AnimQueue.Tween = {};
 
-Anim.Tween = function ( mc:MovieClip, prop:String, easing:Function,
-						startval:Number, endval:Number, duration:Number ):Void {
-	var idx:String = mc._name +"."+ prop;
-	if ( Anim.BeingTweened[ idx ] != undefined )
-		delete Anim.BeingTweened[ idx ];
+Anim.tweenTo = function ( prop:String, endval:Number, speed:Number, easing:Function ):Void {
+	var startval:Number = this[ prop ];
+	if ( startval == endval ) return;
+	speed = ( isNaN( speed ) ) ? 1.0 : speed;
 
-	mc[ prop ] = startval;
-	mc._visible = true;
-	var change:Number = endval - startval;
-	Anim.BeingTweened[ idx ] = {
+	var idx:String = this._name +"."+ prop;
+	if ( AnimQueue.Tween[ idx ] != undefined )
+		delete AnimQueue.Tween[ idx ];
+
+	this._visible = true;
+	AnimQueue.Tween[ idx ] = {
 		idx: idx,
 		start_t: Time.Ticks,
-		mc: mc,
+		mc: this,
 		prop: prop,
 		begin: startval,
-		change: change,
+		change: endval - startval,
 		end: endval,
 		easing: ( easing ) ? easing : None.easeInOut,
-		duration: duration * 1000
+		duration: speed * Anim.Speed * 1000
 	};
 }
+MovieClip.prototype.tweenTo = Anim.tweenTo;
 
-Anim.ProcessTween = function ( tween:Object ):Void {
+
+Anim.tween = function ( prop:String, startval:Number, endval:Number, speed:Number, ease:Function ):Void {
+	this[ prop ] = startval;
+	this.tweenTo( this, prop, endval, speed, ease );
+}
+MovieClip.prototype.tween = Anim.tween;
+
+Anim.processTween = function ( tween:Object ):Void {
 	if ( !tween.mc || !tween.mc._visible ) Anim.StopTween( tween.mc );
 
 	var t:Number = Time.Ticks - tween.start_t;
 	if ( t >= tween.duration ) {
 		tween.mc[ tween.prop ] = tween.end;
-		delete Anim.BeingTweened[ tween.idx ];
+		if ( tween.mc._alpha == 0 )
+			tween.mc._visible = false;
+		if ( tween.mc[ "onAnimEnd" ] != undefined )
+			tween.mc[ "onAnimEnd" ]();
+		delete AnimQueue.Tween[ tween.idx ];
 		return;
 	}
 	tween.mc[ tween.prop ] = tween.easing( t, tween.begin, tween.change, tween.duration );
 }
 
-Anim.StopTween = function ( mc:MovieClip ):Void {
+Anim.stopTween = function ( mc:MovieClip ):Void {
 	var match:String;
-	for ( var idx:String in Anim.BeingTweened ) {
+	for ( var idx:String in AnimQueue.Tween ) {
 		match = idx.substr( 0, idx.lastIndexOf( "." ) );
 		if ( match == mc._name )
-			delete Anim.BeingTweened[ idx ];
+			delete AnimQueue.Tween[ idx ];
 	}
 }
 
-Do_Periodic( 1, function ():Void {
+Periodic( 1, function ():Void {
 	var tween:Object;
-	for ( var idx:String in Anim.BeingTweened ) {
-		tween = Anim.BeingTweened[ idx ];
-		Anim.ProcessTween( tween );
+	for ( var idx:String in AnimQueue.Tween ) {
+		tween = AnimQueue.Tween[ idx ];
+		Anim.processTween( tween );
 	}
 } );

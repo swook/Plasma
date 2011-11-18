@@ -10,11 +10,12 @@
 import mx.transitions.easing.*;
 
 var Anim:Object = {};
+var AnimQueue:Object = {};
 
-Anim.Stop = function ( mc:MovieClip ):Void {
-	Anim.StopTween( mc );
-	Anim.StopLoop( mc );
+Anim.stop = function ():Void {
+	Anim.stopTween( this );
+	Anim.stopLoop( this );
 }
-
+MovieClip.prototype.stopAnim = Anim.stop;
 
 

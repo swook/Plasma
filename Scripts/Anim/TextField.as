@@ -6,48 +6,74 @@
  *   Anim/TextField.as - TextField Animations
  */
 
-Anim.TextScrollList = {};
+AnimQueue.textScroll = {};
 
-Anim.TextScroll = function ( tf:TextField ):Void {
-	var idx:String = tf._name;
-	var max:Number = tf.maxhscroll;
-	Anim.StopTextScroll( tf );
+Anim.textScroll = function ():Void {
+	this.stopScroll();
 
-	Anim.TextScrollList[ idx ] = {
-		idx: tf._name,
-		t: 0,
-		last_t: Time.Ticks,
-		tf: tf,
-		duration: max * 100,
+	AnimQueue.textScroll[ this._name ] = {
+		init: true,
+		tf: this,
+		format: this.getTextFormat(),
 		direction: 1
 	};
 }
+TextField.prototype.startHScroll = Anim.textScroll;
 
-Anim.ProcessTextScroll = function ( loop:Object ):Void {
-	if ( !loop.tf ) delete Anim.TextScrollList[ loop.idx ];
-	if ( !loop.tf._visible ) return;
-	var max:Number = loop.tf.maxhscroll;
-	if ( max == 0 ) return;
-	loop.end = max;
+Anim.processTextScroll = function ( tscroll:Object ):Void {
+	if ( !tscroll.tf ) delete AnimQueue.textScroll[ tscroll.idx ];
+	if ( !tscroll.tf._visible ) return;
 
-	loop.t += Time.Ticks - loop.last_t;
-	loop.last_t = Time.Ticks;
-	if ( loop.t >= loop.duration ) {
-		loop.direction = -loop.direction;
-		loop.t = 0;
+	var max:Number = tscroll.tf.maxhscroll;
+	if ( tscroll.max != max ) {
+		tscroll.max = max;
+		tscroll.inc = ( max / tscroll.format.size ) >> 4;
+		tscroll.inc++;
+		tscroll.pausedur = ( 128 / max ) >> 0;
+		tscroll.pausedur++;
 	}
-	loop.tf.hscroll = None.easeInOut( loop.t, ( loop.direction > 0 ) ? 0 : max,
-									  loop.direction * max, loop.duration );
+	if ( max < 4 ) return;
+
+	if ( tscroll.pause != undefined ) {
+		if ( tscroll.pause < tscroll.pausedur ) tscroll.pause++;
+		else delete tscroll.pause;
+	}
+	if ( tscroll.pause == undefined ) {
+		if ( !tscroll.init && ( tscroll.tf.hscroll == max || tscroll.tf.hscroll == 0 ) ) {
+			tscroll.direction = -tscroll.direction;
+			tscroll.pause = 0;
+		}
+		tscroll.tf.hscroll += tscroll.inc * tscroll.direction;
+		tscroll.init = false;
+	}
 }
 
-Anim.StopTextScroll = function ( tf:TextField ):Void {
-	delete Anim.TextScrollList[ tf._name ];
+Anim.stopTextScroll = function ():Void {
+	var tscroll:Object = AnimQueue.textScroll[ this._name ];
+	if ( tscroll != undefined ) {
+		tscroll.tf.setTextFormat( tscroll.format );
+		tscroll.tf.hscroll = 0;
+		delete AnimQueue.textScroll[ this._name ];
+	}
 }
+TextField.prototype.stopHScroll = Anim.stopTextScroll;
 
-Do_Periodic( 1, function ():Void {
-	var loop:Object;
-	for ( var idx:String in Anim.TextScrollList ) {
-		loop = Anim.TextScrollList[ idx ];
-		Anim.ProcessTextScroll( loop );
+Anim.resetTextScroll = function ():Void {
+	if ( AnimQueue.pauseTextScroll )
+		return;
+
+	var tscroll:Object = AnimQueue.textScroll[ this._name ];
+	if ( tscroll != undefined ) {
+		tscroll.direction = 1;
+		tscroll.tf.hscroll = 0;
+	}
+}
+TextField.prototype.resetHScroll = Anim.resetTextScroll;
+
+Periodic( 1, function ():Void {
+	var tscroll:Object;
+	for ( var idx:String in AnimQueue.textScroll ) {
+		tscroll = AnimQueue.textScroll[ idx ];
+		Anim.processTextScroll( tscroll );
 	}
 } );

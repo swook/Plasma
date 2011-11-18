@@ -68,14 +68,15 @@ function fscmd_cache ( cmd:String, dur:Number ) {
  * - Queue funcs in array
  */
 
-var onUnloadQueue:Array = [];
-onUnload = function ():Void {
-	for ( var i = 0; i < onUnloadQueue.length; i++ )
-		onUnloadQueue[ i ]();
-	Data.Unload();
-}
-
-// Usage: call as function but put a functioin as parameter.
-function Do_onUnload ( func:Function ):Void {
-	onUnloadQueue.push( func );
+Queue.onUnload = [];
+onUnload = function ( func:Function ):Void {
+	if ( func ) {
+		Queue.onUnload.push( func );
+	}
+	else {
+		var len:Number = Queue.onUnload.length;
+		for ( var i:Number = 0; i < len; i++ )
+			Queue.onUnload[ i ]();
+		Data.Unload();
+	}
 }

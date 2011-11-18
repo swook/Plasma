@@ -6,33 +6,36 @@
  *   Anim/Loop.as - Looping Functionality
  */
 
-Anim.BeingLooped = {};
+AnimQueue.loop = {};
 
-Anim.Loop = function ( mc:MovieClip, prop:String, easing:Function,
-						startval:Number, endval:Number, duration:Number ):Void {
-	var idx:String = mc._name +"."+ prop;
-	if ( Anim.BeingLooped[ idx ] != undefined )
-		delete Anim.BeingLooped[ idx ];
+Anim.loop = function ( prop:String, startval:Number, endval:Number, speed:Number, easing:Function ):Void {
+	if ( startval == endval ) return;
+	speed = ( isNaN( speed ) ) ? 1.0 : speed;
 
-	mc[ prop ] = startval;
-	mc._visible = true;
-	var change:Number = endval - startval;
-	Anim.BeingLooped[ idx ] = {
+	var idx:String = this._name +"."+ prop;
+	if ( AnimQueue.loop[ idx ] != undefined )
+		delete AnimQueue.loop[ idx ];
+
+	this[ prop ] = startval;
+	this._visible = true;
+
+	AnimQueue.loop[ idx ] = {
 		idx: idx,
 		t: 0,
 		last_t: Time.Ticks,
-		mc: mc,
+		mc: this,
 		prop: prop,
 		begin: startval,
-		change: change,
+		change: endval - startval,
 		end: endval,
 		easing: ( easing ) ? easing : None.easeInOut,
-		duration: duration * 1000,
+		duration: speed * Anim.Speed * 1000,
 		direction: 1
 	};
 }
+MovieClip.prototype.loop = Anim.loop;
 
-Anim.ProcessLoop = function ( loop:Object ):Void {
+Anim.processLoop = function ( loop:Object ):Void {
 	if ( !loop.mc || !loop.mc._visible ) return;
 
 	loop.t += Time.Ticks - loop.last_t;
@@ -45,19 +48,19 @@ Anim.ProcessLoop = function ( loop:Object ):Void {
 										loop.direction * loop.change, loop.duration );
 }
 
-Anim.StopLoop = function ( mc:MovieClip ):Void {
+Anim.stopLoop = function ( mc:MovieClip ):Void {
 	var match:String;
-	for ( var idx:String in Anim.BeingLooped ) {
+	for ( var idx:String in AnimQueue.loop ) {
 		match = idx.substr( 0, idx.lastIndexOf( "." ) );
 		if ( match == mc._name )
-			delete Anim.BeingLooped[ idx ];
+			delete AnimQueue.loop[ idx ];
 	}
 }
 
-Do_Periodic( 1, function ():Void {
+Periodic( 1, function ():Void {
 	var loop:Object;
-	for ( var idx:String in Anim.BeingLooped ) {
-		loop = Anim.BeingLooped[ idx ];
-		Anim.ProcessLoop( loop );
+	for ( var idx:String in AnimQueue.loop ) {
+		loop = AnimQueue.loop[ idx ];
+		Anim.processLoop( loop );
 	}
 } );

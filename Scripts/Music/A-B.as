@@ -34,9 +34,11 @@ Music.ABMode.addProperty ( "Current",
 
 Music.ABMode.Clear = function ():Void {
 	ext_fscommand2( "KeyAudABModeClear" );		// All Players
+	Music.ABMode.CurrentIdx = 0;
 }
-Do_onUnload( Music.ABMode.Clear );
-Do_onTrackChange( function ():Void {
+
+onUnload( Music.ABMode.Clear );
+onTrackChange( function ():Void {
 	if ( Music.ABMode.CurrentIdx == 1 )
 		Music.ABMode.Clear();
 } );

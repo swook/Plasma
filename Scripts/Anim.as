@@ -8,6 +8,6 @@
 
 #include "./Anim/Common.as"
 #include "./Anim/Tween.as"
-#include "./Anim/BasicTween.as"
 #include "./Anim/Loop.as"
 #include "./Anim/TextField.as"
+#include "./Anim/BasicTween.as"

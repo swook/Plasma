@@ -6,8 +6,8 @@
  *   Core.as - Core Functionality
  */
 
-if ( _global.Plasma == undefined )
-	_global.Plasma = new Object();
+_global.Plasma = {};
+var Queue:Object = {};
 
 #include "./Core/Data.as"
 #include "./Core/Utility.as"

@@ -14,7 +14,7 @@ if ( !UCI_NAME )
 // For: Mode.as
 // Mode Init
 {
-	switch ( Sys.State ) {
+	switch ( Sys.state ) {
 		case 0:																	// No state
 		case 1:																	// Music/Video Playing
 		case 2:																	// Music/Video Paused
@@ -44,20 +44,20 @@ if ( !UCI_NAME )
 }
 
 // For: Data.as
-Do_Periodic( 5000, Data.Sync );
+Periodic( 5000, Data.Sync );
 
 // For: System.as
-Do_onDisplayUpdate( function ():Void {
+onDisplayUpdate( function ():Void {
 	Sys.State = ext_fscommand2( "GetEtcState" );
 });
 
 // For: Volume.as
-Do_onDisplayUpdate( Volume.CheckDevice );
+onDisplayUpdate( Volume.CheckDevice );
 
 
 
 // For: Time.as
-Do_onUnload( function ():Void {
+onUnload( function ():Void {
 	delete onEnterFrame;
 });
 
@@ -77,4 +77,4 @@ Do_onUnload( function ():Void {
 	}
 }
 
-tDevice = "Your Device: "+ Sys.Device;
+tDevice = "Your Device: "+ Sys.device;

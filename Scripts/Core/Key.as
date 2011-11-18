@@ -98,8 +98,7 @@ onKey.Handler = function ( KeyCode:Number ):Void {
 
 		// Display Update (Speaker, Track, Screen, Bluetooth etc change)
 		case _global.KEY_DISPLAY_UPDATE:										// 123 Key (F12)
-			for ( var idx in onDisplayUpdateQueue )
-				onDisplayUpdateQueue[ idx ]();
+			onDisplayUpdate();
 			break;
 
 		// Hold Key
@@ -117,7 +116,14 @@ onKey.Handler = function ( KeyCode:Number ):Void {
 }
 
 
-var onDisplayUpdateQueue:Array = new Array();
-function Do_onDisplayUpdate ( func:Function ):Void {
-	onDisplayUpdateQueue.push( func );
+Queue.onDisplayUpdate = [];
+function onDisplayUpdate ( func:Function ):Void {
+	if ( func ) {
+		Queue.onDisplayUpdate.push( func );
+	}
+	else {
+		var len:Number = Queue.onDisplayUpdate.length;
+		for ( var i:Number = 0; i < len; i++ )
+			Queue.onDisplayUpdate[ i ]();
+	}
 }

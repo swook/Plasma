@@ -1,0 +1,50 @@
+[DONE] * onLongClick and onShortClick events
+
+* UCI loader/unloader
+
+* Provide legacy functions and constants
+
+* Implement toggling of Plasma
+  - Detect if next UCI uses Plasmoid
+  - Delete un-necessary global methods
+  - Disable un-necessary periodic events
+
+* [IND] List framework (List generation/Scrolling/Options(Toggle/Select/Value/String/Browser))
+  REQUIRES: Colour Picker, Image Selector Browser
+  - Allow opening of image selector and colour picker
+  - Provide kinetic scrolling
+  - Allow colour customisation
+    + Create elements via duplication of hidden mvclip with colour transformation performed.
+
+* [IND] Colour Picker
+  - Implement in widget mode allowing for usage in lists and dialogues
+
+* [IND] Image Selector Browser (Much like Pictures UI)
+  - Code as widget
+  - Base on \\Pictures\ directory and allow browsing
+
+* [IND] EQ Editor?
+  - Code as example Plasmoid? or part of Circ?
+
+* Notification System
+  - Queuing
+  - Timeouts
+
+* [IND] Dialogues (Message/Confirmation/Choice)
+  - Message: Timeouts and/or confirm
+  - Confirmation: Wait for confirmation
+  - Choice: Wait for choice
+
+* [IND] Keyboard
+  REQUIRES: Internationalization
+  - Change layout depending on i18n
+  - Implement full-screen and widget mode
+
+* Internationalization (Keyboard layout/String)
+  - Provide i18n for all other components
+  - Depend on device language selection
+  - Site for contributions
+  - Generate xml or SOL via site
+
+NOTE: [IND] tag represents features which are to be put into
+      independent swf files and loaded as widgets

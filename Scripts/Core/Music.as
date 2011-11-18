@@ -8,61 +8,55 @@
 
 var Music:Object = {};
 
-Music.addProperty( "PlayState",
+Music.addProperty( "playState",
 				   function ():Boolean {
-					   return ( Sys.State == 1 ) ? true : false;
+					   return ( Sys.state == 1 ) ? true : false;
 				   },
 				   function ( state:Boolean ):Void {
-					   if ( Mode.Music ) Sys.State = ( state ) ? 1 : 2;
+					   if ( Mode.Music ) Sys.state = ( state ) ? 1 : 2;
 				   } );
 
-Music.PlayPause = function ():Boolean {
-	if ( Music.PlayState )
-		return Music.Pause();
+Music.playPause = function ():Boolean {
+	if ( Music.playState )
+		return Music.pause();
 	else
-		return Music.Play();
+		return Music.play();
 }
 
-Music.Play = function ():Boolean {
-	if ( !Music.PlayState ) {			// All Players | J3, X7, C2
+Music.play = function ():Boolean {
+	if ( !Music.playState ) {			// All Players | J3, X7, C2
 		var music:Boolean = Mode.Music;
-		var setoffset:Boolean, updateoffset:Boolean;
-		if ( music ) {
-			if ( Music.PosOffset == undefined ) setoffset = true;
-			else updateoffset = true;
-		}
-		if ( setoffset ) Music.Pos = Music.Pos;
+		Music.pos.set( Music.pos.s );
 
 		var cmd:String = ( music ) ? "KeyAudPlay" : "KeyComShortPlay";
 		if ( ext_fscommand2( cmd ) == 1 ) {
-			Music.PlayState = true;
-			if ( setoffset ) Music.PosOffset = ( getTimer() % 1000 );
-			if ( updateoffset ) Music.PosOffset
+			Music.pos.offset.reset();
+			Music.playState = true;
 			return true;
 		}
 	}
 	return false;
 }
 
-Music.Pause = function ():Boolean {
-	if ( Music.PlayState ) {             // All Players | J3, X7, C2
+Music.pause = function ():Boolean {
+	if ( Music.playState ) {             // All Players | J3, X7, C2
 		var cmd:String = ( Mode.Music ) ? "KeyAudPause" : "KeyComShortPlay";
 		if ( ext_fscommand2( cmd ) == 1 ) {
-			Music.PlayState = false;
+			Music.playState = false;
 			return true;
 		}
 	}
 	return false;
 }
 
-Music.Prev = function ():Boolean {  // All Players     | J3, X7, C2
+Music.prev = function ():Boolean {  // All Players     | J3, X7, C2
 	var cmd:String = ( Mode.Music ) ? "KeyAudShortREW" : "KeyComShortREW";
 	if ( ext_fscommand2( cmd ) == 1 ) {
 		if ( Mode.Music ) {
-			if ( !Music.PlayState )
+			if ( !Music.playState )
 				Music.Update();
-			Music.Pos_ = 0;
-			Music.PosOffset = ( getTimer() % 1000 );
+			Music.pos_ = 0;
+			Music.posOffset = ( getTimer() % 1000 );
 		}
 		return true;
 	}
@@ -73,10 +67,10 @@ Music.Next = function ():Boolean {  // All Players    | J3, X7, C2
 	var cmd:String = ( Mode.Music ) ? "KeyAudShortFF" : "KeyComShortFF";
 	if ( ext_fscommand2( cmd ) == 1 ) {
 		if ( Mode.Music ) {
-			if ( !Music.PlayState )
+			if ( !Music.playState )
 				Music.Update();
-			Music.Pos_ = 0;
-			Music.PosOffset = ( getTimer() % 1000 );
+			Music.pos_ = 0;
+			Music.posOffset = ( getTimer() % 1000 );
 		}
 		return true;
 	}

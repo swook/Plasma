@@ -279,30 +279,30 @@ function RegisterSystemTickTimer(Void)
                 } // end if
             } // end if
         } // end of for
-        if (enableTextScrolling == true)
-        {
-            for (idx = 0; idx < NUMOFSCROLLFIELD; idx++)
-            {
-                if (scrollFlagArray[idx] != null)
-                {
-                    tempMC = scrollFlagArray[idx];
-                    if (scrollDirection[idx] == 0)
-                    {
-                        ++tempMC.hscroll;
-                        if (tempMC.hscroll >= tempMC.maxhscroll)
-                        {
-                            scrollDirection[idx] = 1;
-                        } // end if
-                        continue;
-                    } // end if
-                    --tempMC.hscroll;
-                    if (tempMC.hscroll <= 0)
-                    {
-                        scrollDirection[idx] = 0;
-                    } // end if
-                } // end if
-            } // end of for
-        } // end if
+//         if (enableTextScrolling == true)
+//         {
+//             for (idx = 0; idx < NUMOFSCROLLFIELD; idx++)
+//             {
+//                 if (scrollFlagArray[idx] != null)
+//                 {
+//                     tempMC = scrollFlagArray[idx];
+//                     if (scrollDirection[idx] == 0)
+//                     {
+//                         ++tempMC.hscroll;
+//                         if (tempMC.hscroll >= tempMC.maxhscroll)
+//                         {
+//                             scrollDirection[idx] = 1;
+//                         } // end if
+//                         continue;
+//                     } // end if
+//                     --tempMC.hscroll;
+//                     if (tempMC.hscroll <= 0)
+//                     {
+//                         scrollDirection[idx] = 0;
+//                     } // end if
+//                 } // end if
+//             } // end of for
+//         } // end if
     };
 } // End of the function
 function InitializeLauncher(Void)
@@ -680,109 +680,22 @@ _global.gfn_Common_GetSeekRatio = _global.CommonGetSeekRatio = function (Void)
     return (_global.seekRatio);
 };
 _global.gfn_Common_Get2ChiperNum = _global.CommonGetTwoDigitNumber = Time.Conv.Num_2Dig;
-_global.gfn_Common_GetTime2Text = _global.CommonGetTime2Text = Time.Conv.Text_hhmmss;
-_global.gfn_Common_SetStringScroll = _global.CommonSetStringScroll = function (textFieldName, textAlign)
-{
-    var _loc5 = textFieldName.getTextFormat();
-    if (textFieldName.maxhscroll >= 5)
-    {
-        var _loc3 = NUMOFSCROLLFIELD;
-        for (var _loc2 = 0; _loc2 < NUMOFSCROLLFIELD; ++_loc2)
-        {
-            if (scrollFlagArray[_loc2] == textFieldName)
-            {
-                _loc3 = _loc2;
-                break;
-                continue;
-            } // end if
-            if (scrollFlagArray[_loc2] == null && _loc3 == NUMOFSCROLLFIELD)
-            {
-                _loc3 = _loc2;
-            } // end if
-        } // end of for
-        if (_loc3 != NUMOFSCROLLFIELD)
-        {
-            scrollFlagArray[_loc3] = textFieldName;
-            scrollDirection[_loc3] = 0;
-            scrollAlign[_loc3] = _loc5.align;
-            _loc5.align = "left";
-            textFieldName.setTextFormat(_loc5);
-            return (_loc3);
-        } // end if
-    }
-    else
-    {
-        for (var _loc2 = 0; _loc2 < NUMOFSCROLLFIELD; ++_loc2)
-        {
-            if (scrollFlagArray[_loc2] == textFieldName)
-            {
-                scrollFlagArray[_loc2] = null;
-                scrollDirection[_loc2] = 0;
-                scrollAlign[_loc2] = 0;
-                break;
-            } // end if
-        } // end of for
-        if (textAlign == _global.TEXT_ALIGN_CENTER)
-        {
-            _loc5.align = "center";
-            textFieldName.setTextFormat(_loc5);
-        } // end if
-        return (-1);
-    } // end else if
-    false;
-    return (1);
-};
-_global.gfn_Common_StringScroll = _global.CommonStringScroll = function (Void)
-{
-    for (var _loc1 = 0; _loc1 < NUMOFSCROLLFIELD; ++_loc1)
-    {
-        if (scrollFlagArray[_loc1] != null)
-        {
-            if (scrollDirection[_loc1] == 0)
-            {
-                ++scrollFlagArray[_loc1].hscroll;
-                if (scrollFlagArray[_loc1].hscroll >= scrollFlagArray[_loc1].maxhscroll)
-                {
-                    scrollDirection[_loc1] = 1;
-                } // end if
-                continue;
-            } // end if
-            --scrollFlagArray[_loc1].hscroll;
-            if (scrollFlagArray[_loc1].hscroll <= 0)
-            {
-                scrollDirection[_loc1] = 0;
-            } // end if
-        } // end if
-    } // end of for
-};
-_global.gfn_Common_ResetStringScroll = _global.CommonResetStringScroll = function (targetIdx)
-{
-    var _loc3;
-    var _loc2;
-    if (targetIdx == undefined)
-    {
-        _loc3 = 0;
-        _loc2 = NUMOFSCROLLFIELD;
-    }
-    else
-    {
-        _loc3 = targetIdx;
-        _loc2 = targetIdx + 1;
-    } // end else if
-    for (var _loc1 = _loc3; _loc1 < _loc2; ++_loc1)
-    {
-        if (scrollFlagArray[_loc1] != null)
-        {
-            restoreAlign.align = scrollAlign[_loc1];
-            scrollFlagArray[_loc1].setTextFormat(restoreAlign);
-            restoreAlign.align = null;
-        } // end if
-        scrollFlagArray[_loc1].hscroll = 0;
-        scrollFlagArray[_loc1] = null;
-        scrollDirection[_loc1] = null;
-        scrollAlign[_loc1] = null;
-    } // end of for
-};
+_global.gfn_Common_GetTime2Text = _global.CommonGetTime2Text = Time.Conv.Time_hhmmss;
+_global.gfn_Common_SetStringScroll = _global.CommonSetStringScroll = function ( tf:TextField, align:Number ):Number {
+	if ( align == _global.TEXT_ALIGN_CENTER ) {
+		var format:TextFormat = tf.getTextFormat();
+		format.align = "center";
+		tf.setTextFormat( format );
+	}
+	tf.startHScroll();
+	return 1;
+}
+_global.gfn_Common_StringScroll = _global.CommonStringScroll = function ():Void {}
+_global.gfn_Common_ResetStringScroll = _global.CommonResetStringScroll = function ():Void {
+	var tscroll:Object;
+	for ( var idx:String in AnimQueue.textScroll )
+		AnimQueue.textScroll[ idx ].tf.resetHScroll();
+}
 _global.CommonSetDigitMC = function (mc, number)
 {
     mc.MCDigit1.gotoAndStop(int(number / 10) + 1);
@@ -794,17 +707,7 @@ _global.gfn_Common_SetMask = function (maskWidth, maskHeight, bgMC, maskMC)
     maskMC._height = maskHeight;
     bgMC.setMask(maskMC);
 };
-_global.gfn_ToggleVisibleState = function (targetMC)
-{
-    if (targetMC._visible == true)
-    {
-        targetMC._visible = false;
-    }
-    else
-    {
-        targetMC._visible = true;
-    } // end else if
-};
+_global.gfn_ToggleVisibleState = function ( mc:MovieClip ):Void { mc._visible = !mc._visible; }
 _global.gfn_Common_SetTimer = function (tick, exFunc)
 {
     var _loc1;
@@ -1398,7 +1301,6 @@ var previousMode = -1;
 var loading = false;
 var modeArray = new Array("music", "movie", "radio", "record", "dmb", "browser_total", "text", "picture", "PowerDicRun", "null", "null", "mainmenu", "mainmenu", "mainmenu", "Setting", "browser_total", "null", "browser_total", "browser_total");
 var initializeCountry = 99;
-var enableTextScrolling = true;
 var MAX_MAINMENU_NUMBER = 3;
 var DEFAULT_HEADER_HEIGHT = 59;
 var userWallpaper = 0;
@@ -1407,28 +1309,21 @@ var wallpaperLoader = new MovieClipLoader();
 var wallpaperListener = new Object();
 var currentBrowserBackground = 0;
 var alarmSettingFlag = false;
-_global.ChangeWallpaper = function (imgNumber, isBrowser)
-{
+_global.ChangeWallpaper = function (imgNumber, isBrowser) {
     SetWallpaper(0);
-    if (imgNumber == 0)
-    {
-        SetWallpaper(1);
-    } // end if
+    if (imgNumber == 0) SetWallpaper(1);
     if (isBrowser == true)
     {
         currentBrowserBackground = imgNumber;
         SaveConfiguration();
-    } // end if
+    }
 };
 _global.SetBrowserWallpaper = function (imgNumber)
 {
     currentBrowserBackground = imgNumber;
     SaveConfiguration();
 };
-_global.GetBrowserWallpaper = function (Void)
-{
-    return (currentBrowserBackground);
-};
+_global.GetBrowserWallpaper = function ():Number { return currentBrowserBackground; }
 _global.Load_SWF = _global.LoadSWF = function (itemNumber, fileName)
 {
     var _loc4 = 0;
@@ -1509,65 +1404,13 @@ _global.LoadPrevSWF = function (Void)
     } // end if
     LoadSwfFile(prevLauncherMode);
 };
-_global.CheckCurrentLauncherMode = function (mode)
-{
-    if (currentMode == mode)
-    {
-        return (true);
-    }
-    else
-    {
-        return (false);
-    } // end else if
-};
-_global.GetCurrentLauncherMode = function (Void)
-{
-    return (currentMode);
-};
-_global.CheckPrevLauncherMode = function (mode)
-{
-    if (previousMode == mode)
-    {
-        return (true);
-    }
-    else
-    {
-        return (false);
-    } // end else if
-};
-_global.GetPrevLauncherMode = function (Void)
-{
-    return (previousMode);
-};
-_global.ResumeTextScrolling = function (Void)
-{
-    enableTextScrolling = true;
-};
-_global.PauseTextScrolling = function (Void)
-{
-    enableTextScrolling = false;
-};
-_global.SetAlarmSettingFlag = function (flag)
-{
-    alarmSettingFlag = flag;
-};
-_global.GetFirmwareVersion = function (Void)
-{
-    if (firmwareVersion == -1)
-    {
-        ext_fscommand2("GetSysVersion", "versionString");
-        firmwareVersion = Number(versionString.substring(0, 1));
-        if (firmwareVersion == 0)
-        {
-            firmwareVersion = _global.J3_DOMESTIC_DMB;
-        } // end if
-        _global.g_FirmwareVersion = firmwareVersion;
-    } // end if
-    return (firmwareVersion);
-};
-_global.GetAlarmSettingFlag = function (Void)
-{
-    return (alarmSettingFlag);
-};
-InitializeLauncher();
-
+_global.CheckCurrentLauncherMode = function ( mode:Number ):Boolean { return ( currentMode == mode ) ? true : false; }
+_global.GetCurrentLauncherMode = function ():Number { return currentMode; }
+_global.CheckPrevLauncherMode = function ( mode:Number ):Boolean { return ( previousMode == mode ) ? true : false; }
+_global.GetPrevLauncherMode = function ():Number { return previousMode; }
+_global.ResumeTextScrolling = function ():Void { AnimQueue.pauseTextScroll = false; }
+_global.PauseTextScrolling = function ():Void { AnimQueue.pauseTextScroll = true; }
+_global.SetAlarmSettingFlag = function ( flag ):Void { alarmSettingFlag = flag; }
+_global.GetFirmwareVersion = function ():Number { return Sys.Firmware.typeNum; }
+_global.GetAlarmSettingFlag = function () { return ( alarmSettingFlag ); }
+//InitializeLauncher();

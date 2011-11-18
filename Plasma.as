@@ -9,5 +9,6 @@
 #include "./Scripts/Core.as"
 #include "./Scripts/Music.as"
 #include "./Scripts/Anim.as"
+#include "./Scripts/Interaction.as"
 #include "./Scripts/Launcher.as"
 #include "./Scripts/Cowon.as"
