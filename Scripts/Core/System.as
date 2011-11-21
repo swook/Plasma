@@ -37,7 +37,7 @@ Sys.addProperty( "device",
 
 
 /*
- * Function: Sys.checkDevice
+ * Function: Sys.checkDevice()
  * Checks and saves what the current device is.
  *
  * Checking is done via bitwise AND comparisons.
@@ -52,7 +52,6 @@ Sys.addProperty( "device",
  * See also:
  *     <Sys.device>
  */
-// Manually re-check device
 Sys.checkDevice = function ():Number {
 	// Initialise for all devices
 	// 11111
