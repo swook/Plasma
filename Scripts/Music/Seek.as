@@ -35,7 +35,7 @@ Music.pos.addProperty( "current",
 					   function ():Void {} );
 
 Music.pos.reset = function ():Void {
-	Music.pos.cache = ext_fscommand2( "GetAudPlayTime" );
+	Music.pos.cache = 0;//ext_fscommand2( "GetAudPlayTime" );
 	Music.pos.cache_ticks = Time.Ticks;
 	Music.pos.offset.reset();
 }
@@ -62,7 +62,7 @@ Music.pos.set = function ( pos:Number ):Void {
 		return;
 	}
 
-	if ( ext_fscommand2( "KeyAudDirectSeek", pos ) == 1 ) { // All Players
+	if ( ext_fscommand2( "KeyAudDirectSeek", pos ) == 1 ) {						// All Players
 		Music.pos.cache = pos;
 		Music.pos.cache_ticks = Time.Ticks;
 		Music.pos.offset.reset();
@@ -91,9 +91,7 @@ Music.pos.offset.msFromDiff = function ( ms:Number ):Number {
 	ms = ms >> 0;																// equiv. int
 	if ( ms < 0 ) neg = true;
 	ms = ( ms ^ ( ms >> 31 ) ) - ( ms >> 31 );									// equiv. Math.asb
-	if ( ms < 1000 ) return ( neg ) ? 1000 - ms : ms;
-	ms = ms - ( ( ( ( ms >> 3 ) / 125 ) >> 0 ) << 3 ) * 125;
-	if ( neg ) return 1000 - ms;
+	if ( ms > 1000 ) ms = ms % 1000;
 	return ( neg ) ? 1000 - ms : ms;
 }
 

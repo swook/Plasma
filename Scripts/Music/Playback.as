@@ -94,10 +94,11 @@ onTrackChange = function ( func:Function ):Void {
 }
 
 function UpdateSeeker ():Void {
+	//abc.text = Music.pos.ms;
 	Main.Seeker.Cur.tCurTime = Time.Conv.Text_mmss( Music.intPos );
 	if ( Music.Length == 0 )
 		Main.Seeker.Cur._x = 0;
 	else
-		Main.Seeker.Cur._x = Music.pos / Music.Length * 272;
+		Main.Seeker.Cur._x = Music.pos.s / Music.Length * 272;
 }
 Periodic( 1, UpdateSeeker );
