@@ -3,7 +3,8 @@
  *   |_____] |      |_____| |______ |  |  | |_____|
  *   |       |_____ |     | ______| |  |  | |     |
  *
- *   Core/System.as - System Settings Control
+ * File: Core/System.as
+ * System Settings Control
  */
 
 // System.capabilities.os: OEM
@@ -37,7 +38,7 @@ Sys.addProperty( "device",
 
 
 /*
- * Function: Sys.checkDevice()
+ * Method: Sys.checkDevice
  * Checks and saves what the current device is.
  *
  * Checking is done via bitwise AND comparisons.
