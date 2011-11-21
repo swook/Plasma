@@ -15,7 +15,6 @@ Sys.state = ext_fscommand2( "GetEtcState" );
 
 /*
  * Property: Sys.device
- *
  * Returns current device's name
  *
  * Get:
@@ -39,7 +38,6 @@ Sys.addProperty( "device",
 
 /*
  * Function: Sys.checkDevice
- *
  * Checks and saves what the current device is.
  *
  * Checking is done via bitwise AND comparisons.
@@ -92,7 +90,6 @@ Sys.deviceNameFromID = function ( i:Number ):String {
 
 /*
  * Property: Sys.S9
- *
  * Returns a boolean describing the current device
  *
  * Returns:
@@ -107,7 +104,6 @@ Sys.addProperty( "S9",
 
 /*
  * Property: Sys.i9
- *
  * Returns a boolean describing the current device
  *
  * Returns:
@@ -122,7 +118,6 @@ Sys.addProperty( "i9",
 
 /*
  * Property: Sys.J3
- *
  * Returns a boolean describing the current device
  *
  * Returns:
@@ -137,7 +132,6 @@ Sys.addProperty( "J3",
 
 /*
  * Property: Sys.X7
- *
  * Returns a boolean describing the current device
  *
  * Returns:
@@ -152,7 +146,6 @@ Sys.addProperty( "X7",
 
 /*
  * Property: Sys.C2
- *
  * Returns a boolean describing the current device
  *
  * Returns:
